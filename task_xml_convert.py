@@ -66,12 +66,14 @@ def convert():
             property_nodes = xml_util.get_children(node)
             targetObject_node = xml_util.get_node_by_keyvalue(property_nodes, {"name":"targetObject"})[0]
             targetMethod_node = xml_util.get_node_by_keyvalue(property_nodes, {"name":"targetMethod"})[0]  
+            concurrent_node = xml_util.get_node_by_keyvalue(property_nodes, {"name":"concurrent"})[0]
                      
             targetObject = targetObject_node.attrib['ref']   
             targetMethod = targetMethod_node.attrib['value']
             
             node.remove(targetObject_node)        
             node.remove(targetMethod_node) 
+            node.remove(concurrent_node)
             
             targetObject_entry_node = xml_util.create_node("entry",{"key":"targetObject","value":targetObject},'')
             targetMethod_entry_node = xml_util.create_node("entry",{"key":"targetMethod","value":targetMethod},'')
