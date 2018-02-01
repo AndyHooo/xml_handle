@@ -108,8 +108,10 @@ def convert():
         startupDelay_node = xml_util.create_node("property",{"name":"startupDelay","value":"10"},'')
         applicationContextSchedulerContextKey_node = xml_util.create_node("property",{"name":"applicationContextSchedulerContextKey","value":"applicationContextKey"},'')
         configLocation_node = xml_util.create_node("property",{"name":"configLocation","value":quartz_properties_path},'')
-        jobFactory_node = xml_util.create_node("property",{"name":"jobFactory","value":job_factory_class},'')
+        jobFactory_node = xml_util.create_node("property",{"name":"jobFactory"},'')
+        AutoWiringSpringBeanJobFactory_node = xml_util.create_node("bean",{"class":"com.andy.quartz.AutoWiringSpringBeanJobFactory"},'')
         
+        xml_util.add_child_node(jobFactory_node,AutoWiringSpringBeanJobFactory_node)
         xml_util.add_child_nodes(SchedulerFactoryBean_nodes, dataSource_node)
         xml_util.add_child_nodes(SchedulerFactoryBean_nodes, overwriteExistingJobs_node)
         xml_util.add_child_nodes(SchedulerFactoryBean_nodes, exposeSchedulerInRepository_node)
