@@ -20,7 +20,7 @@ def convert():
     print '开始转换...'
     xml_files = load_xml_files()
     for xml_file in xml_files:
-        file_name = xml_file.split("/")[-1]
+        file_name = xml_file.split(os.path.sep)[-1]
         converted_file_path = converted_file_parent_path + "/" + file_name
         
         tree = xml_util.read_xml(xml_file) 
