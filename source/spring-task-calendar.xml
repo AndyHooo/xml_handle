@@ -1,0 +1,189 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+				        http://www.springframework.org/schema/task 
+				        http://www.springframework.org/schema/task/spring-task-3.0.xsd">
+	<description>calendar task config</description>
+	<bean id="cmsContentsGeneratorTask" class="com.ytwl.cms.asyn.task.CmsContentsGeneratorTask"></bean>
+	<bean id = "newerStockCalendarCatchTask" class="com.ytwl.cms.asyn.task.NewStockCalendarCatchTask"></bean>
+	<!-- 处理上市新股 -->
+	<bean id="judgeNewStockTask" class="com.ytwl.cms.asyn.task.JudgeNewStockTask"></bean>
+	<!--  抓取财经日历  --> 
+	<bean id="economicsDataGeneratorTiggerBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="cmsContentsGeneratorTask" />
+				<property name="targetMethod" value="buildEconomicsData" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <!-- 每天的 4点半触发   -->
+            <!-- <value>0 0/2 * * * ? *</value>  -->
+             <!-- <value>0 0 0/1 * * ?</value> -->
+            <value>0 55 9 * * ?</value>
+            <!-- <value>*/5 * * * * ?</value> -->
+             
+        </property>   
+	</bean> 
+	
+	<!--  抓取财经事件  --> 
+	<bean id="economicsEventGeneratorTiggerBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="cmsContentsGeneratorTask" />
+				<property name="targetMethod" value="buildEconomicsEvent" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">    
+            <!-- <value>0 32 10 * * ? *</value> -->  
+           <!-- <value>*/20 * * * * ?</value> -->
+            <!-- <value>00 00 18 * * ?</value> -->
+             <value>0 0/5 * * * ?</value>
+        </property>   
+	</bean>
+	
+	
+	<!--  抓取股民故事  --> 
+	<bean id="gubaDataGeneratorTiggerBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="cmsContentsGeneratorTask" />
+				<property name="targetMethod" value="buildGubaData" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <!--每天的 4点半触发 --> 
+            <!-- <value>0 38 19 * * ? *</value>  -->
+             <value>00 00 18 * * ?</value> 
+        </property>   
+	</bean>
+	
+	
+
+
+	<!--  抓取金十快讯  --> 
+	<bean id="buildJinShiKXDataTiggerBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="cmsContentsGeneratorTask" />
+				<property name="targetMethod" value="buildJinShiKXData" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <!-- 每天的 4点半触发  -->
+            <!-- <value>0 0/2 * * * ? *</value>   -->
+             <value>00 00 18 * * ?</value>
+        </property>   
+	</bean>
+	
+	<!-- 抓取新股日历 -->
+	<bean id="buildNewStockCalendarsTiggerBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="cmsContentsGeneratorTask" />
+				<property name="targetMethod" value="buildNewStockCalendars" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <!-- 每天的 4点半触发  -->
+           <!--  <value>0 0/2 * * * ? *</value>   -->
+          <!-- <value>00 00 14 * * ?</value> -->
+           <value>0 0/5 * * * ?</value>
+        </property>   
+	</bean>
+	
+	<!-- 抓取新股日历2 -->
+	<bean id="buildNewerStockCalendarsTiggerBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="newerStockCalendarCatchTask" />
+				<property name="targetMethod" value="buildNewerStockCalendars" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <!-- 每天的 4点半触发  -->
+           <value>0 0/15 * * * ?</value><!-- 每隔十五分钟 -->
+          <!-- <value>00 00 14 * * ?</value> -->
+           <!-- <value>0 0/2 * * * ?</value> -->
+        </property>   
+	</bean>
+	
+	<bean id="judgeNewStockTaskQuartz" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="judgeNewStockTask" />
+				<property name="targetMethod" value="doJudgeNewStockTask" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <value>0 0 1 * * ?</value> 
+        </property>   
+	</bean>
+	
+	<!-- 监控财经数据 -->
+	<bean id="monitorFinancialCalendarTiggerBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="financialCalendarMonitorTask" />
+				<property name="targetMethod" value="monitorCalendarNullValue" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+           <value>0 0 */3 * * ?</value><!-- 每隔20分钟 -->
+        </property>   
+	</bean>
+	
+	<!-- 新版抓取停复牌 -->
+	<bean id="newSrTradingTipsTiggerBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="newSrTradingTipsTask" />
+				<property name="targetMethod" value="sync" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+           <value>0 0 */3 * * ?</value>
+        </property>   
+	</bean>
+	
+	<!-- 根据操作流保留停复牌历史数据 -->
+	<bean id="srTradingTipsHistoryBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="gtjaSrTradingTask" />
+				<property name="targetMethod" value="syncSrTradingTipsHistory" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+           <value>0 0/30 * * * ?</value>
+        </property>   
+	</bean>
+	
+	<!--注册定时任务-->
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">  
+		<property name="triggers">  
+            <list>
+				<!-- 处理上市新股 -->
+				<ref bean="judgeNewStockTaskQuartz" />
+				<ref bean="buildNewStockCalendarsTiggerBean" />
+				<ref bean="buildNewerStockCalendarsTiggerBean" />
+				<ref bean="monitorFinancialCalendarTiggerBean" />
+				<ref bean="newSrTradingTipsTiggerBean"/>
+				<ref bean="srTradingTipsHistoryBean"/>
+			</list>  
+		</property>  
+	</bean>
+</beans>

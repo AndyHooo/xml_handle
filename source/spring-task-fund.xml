@@ -1,0 +1,313 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+				        http://www.springframework.org/schema/task 
+				        http://www.springframework.org/schema/task/spring-task-3.0.xsd">
+	<description>fund task config</description>
+	<!--抓取主题基金代码 -->
+	<bean id="buildThemeFundCodeTriggerBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="themeFundCrawlerTask" />
+				<property name="targetMethod" value="crawlFundsCodes" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+           <!-- 22:03 --> 
+           <value>0 3 22 * * ?</value>
+        </property>   
+	</bean>
+	
+	<!--抓取基金概况 -->
+	<bean id="buildFundSituationTriggerBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="themeFundCrawlerTask" />
+				<property name="targetMethod" value="crawlGeneralSituation" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <!-- 22:10 --> 
+           <value>0 10 22 * * ?</value>
+        </property>   
+	</bean>
+	
+	<!--抓取基金行业配置 -->
+	<bean id="buildSectorAllocationTriggerBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="themeFundCrawlerTask" />
+				<property name="targetMethod" value="crawlSectorAllocations" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+            <!--  0:03  -->
+           <value>0 3 0 * * ?</value>
+        </property>   
+	</bean>
+	<!-- 抓取资产配置明细 -->
+	<bean id="buildAssetAllocationTriggerBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="themeFundCrawlerTask" />
+				<property name="targetMethod" value="assetAllocation" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <!-- 0:1 --> 
+           <value>0 1 0 * * ?</value>
+        </property>   
+	</bean>
+	
+	<!-- 计算行业占比均值 -->
+	<!-- <bean id="buildSectorAccountingTriggerBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="themeFundCrawlerTask" />
+				<property name="targetMethod" value="calSectorAccountingAvg" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+           <value>0 55 2 * * ?</value>
+        </property>   
+	</bean> -->
+	
+	<!--抓取基金持仓明细 -->
+	<bean id="buildPositionTriggerBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="themeFundCrawlerTask" />
+				<property name="targetMethod" value="crawlPositionDetails" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <!-- 0:05 --> 
+           <value>0 5 0 * * ?</value>
+        </property>   
+	</bean>
+	<!--计算基金名称匹配度 -->
+	<bean id="buildNameMatchTriggerBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="themeFundCrawlerTask" />
+				<property name="targetMethod" value="buildNameMatchDegree" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <!-- 0:51 --> 
+           <value>0 51 0 * * ?</value>
+        </property>   
+	</bean>
+	<!--计算基金行业匹配度 -->
+	<!-- <bean id="buildSectorMatchTriggerBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="themeFundCrawlerTask" />
+				<property name="targetMethod" value="buildSectorMatchDegree" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+           <value>0 52 2 * * ?</value>
+        </property>   
+	</bean> -->
+	<!-- 计算基金重仓股匹配度 -->
+	<bean id="buildPositionMatchTriggerBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="themeFundCrawlerTask" />
+				<property name="targetMethod" value="buildPositionMatchDegree" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <!-- 1:1 --> 
+           <value>0 1 1 * * ?</value>
+        </property>   
+	</bean>
+	<!-- 计算基金的主题相似度 -->
+	<bean id = "buildSimilarMatchTriggerBean" class = "org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="themeFundCrawlerTask" />
+				<property name="targetMethod" value="buildTopicSimilar" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <!-- 3:14 --> 
+           <value>0 14 3 * * ?</value>
+        </property>
+	</bean>
+	<!-- 计算基金主题匹配度 -->
+	<bean id="buildThemeMatchTriggerBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="themeFundCrawlerTask" />
+				<property name="targetMethod" value="buildThemeMatchDegree" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <!-- 5:2--> 
+           <value>0 2 5 * * ?</value>
+        </property>   
+	</bean>
+	
+	<!-- 基金的风格和类型 -->
+	<bean id="buildFundStyleAndTypeTriggerBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="themeFundCrawlerTask" />
+				<property name="targetMethod" value="buildFundAndType" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <!-- 01:02 -->
+           <value>0 24 1 * * ?</value>
+        </property>   
+	</bean>
+	
+	<!-- 抓取历史净值 -->
+	<bean id="buildNetTriggerBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="themeFundCrawlerTask" />
+				<property name="targetMethod" value="buildNet" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <!-- 00:06 --> 
+           <value>0 6 0 * * ?</value>
+        </property>   
+	</bean>
+	
+	<!-- 基金经理人信息抓取 -->
+	<bean id="buildFundManagerTriggerBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="fundManagerTask" />
+				<property name="targetMethod" value="buildFundManager" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <!-- 00:07 --> 
+           <value>0 7 0 * * ?</value>
+        </property>   
+	</bean>
+	
+	<!-- 最大回撤 -->
+	<bean id="buildMaxDrawdownTriggerBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="themeFundCrawlerTask" />
+				<property name="targetMethod" value="buildMaxDrawdown" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <!-- 1:36 --> 
+           <value>0 36 1 * * ?</value>
+        </property>   
+	</bean>
+	
+	<!-- 计算基金每个阶段收益率 -->
+	<bean id="buildReturnRateTriggerBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="themeFundCrawlerTask" />
+				<property name="targetMethod" value="buildReturnRate" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <!-- 2:13 --> 
+           <value>0 13 2 * * ?</value>
+           <!-- <value>0 10 10 * * ?</value> -->
+        </property>   
+	</bean>
+	
+	<!-- 设置基金标签 -->
+	<bean id="buildFundTagTriggerBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="themeFundCrawlerTask" />
+				<property name="targetMethod" value="buildFundTag" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <!-- 8:34 --> 
+           <value>0 34 8 * * ?</value>
+        </property>   
+	</bean>
+	
+	<!-- 设置基金经理人标签 -->
+	<bean id="buildFundManagerTagsTriggerBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="fundManagerTask" />
+				<property name="targetMethod" value="buildFundManagerTags" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <!-- 8:31 --> 
+           <value>0 31 8 * * ?</value>
+        </property>   
+	</bean>
+	
+	<!-- 求一基-->
+	<bean id="buildAskFundTriggerBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="themeFundCrawlerTask" />
+				<property name="targetMethod" value="buildAskFund" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">   
+             <!-- 9:01 --> 
+           <value>0 1 9 * * ?</value>
+        </property>   
+	</bean>
+	<!--注册定时任务-->
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">  
+		<property name="triggers">  
+            <list>
+				<ref bean="buildThemeFundCodeTriggerBean" />
+				<ref bean="buildFundSituationTriggerBean" />
+				<ref bean="buildSectorAllocationTriggerBean" />
+				<ref bean="buildPositionTriggerBean" />
+				<ref bean="buildNameMatchTriggerBean" />
+				<!-- <ref bean="buildSectorMatchTriggerBean" /> -->
+				<ref bean="buildSimilarMatchTriggerBean"/>
+				<ref bean="buildPositionMatchTriggerBean" />
+				<ref bean="buildThemeMatchTriggerBean" />
+				<!-- <ref bean="buildSectorAccountingTriggerBean" /> -->
+			    <ref bean="buildFundStyleAndTypeTriggerBean"/>
+				<ref bean="buildNetTriggerBean"/>
+				<ref bean="buildFundManagerTriggerBean"/>
+				<ref bean="buildMaxDrawdownTriggerBean"/>
+				<ref bean="buildReturnRateTriggerBean"/>
+				<ref bean="buildFundTagTriggerBean"/>
+				<ref bean="buildFundManagerTagsTriggerBean"/>
+				<ref bean="buildAssetAllocationTriggerBean"/>
+				<ref bean="buildAskFundTriggerBean"/>
+			</list>  
+		</property>  
+	</bean>
+</beans>
