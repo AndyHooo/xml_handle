@@ -1,0 +1,234 @@
+<?xml version='1.0' encoding='utf-8'?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans       http://www.springframework.org/schema/beans/spring-beans-3.0.xsd             http://www.springframework.org/schema/task              http://www.springframework.org/schema/task/spring-task-3.0.xsd">
+	<description>fund task config</description>
+	
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean" id="buildThemeFundCodeTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" /><property name="requestsRecovery" value="true" /><property name="jobClass" value="com.andy.quartz.JobDetailBean" /><property name="jobDataAsMap"><map><entry key="targetObject" value="themeFundCrawlerTask" /><entry key="targetMethod" value="crawlFundsCodes" /></map></property></bean>
+		</property>
+		<property name="cronExpression">   
+            
+           <value>0 3 22 * * ?</value>
+        </property>   
+	<property name="misfireInstruction" value="2" /></bean>
+	
+	
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean" id="buildFundSituationTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" /><property name="requestsRecovery" value="true" /><property name="jobClass" value="com.andy.quartz.JobDetailBean" /><property name="jobDataAsMap"><map><entry key="targetObject" value="themeFundCrawlerTask" /><entry key="targetMethod" value="crawlGeneralSituation" /></map></property></bean>
+		</property>
+		<property name="cronExpression">   
+              
+           <value>0 10 22 * * ?</value>
+        </property>   
+	<property name="misfireInstruction" value="2" /></bean>
+	
+	
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean" id="buildSectorAllocationTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" /><property name="requestsRecovery" value="true" /><property name="jobClass" value="com.andy.quartz.JobDetailBean" /><property name="jobDataAsMap"><map><entry key="targetObject" value="themeFundCrawlerTask" /><entry key="targetMethod" value="crawlSectorAllocations" /></map></property></bean>
+		</property>
+		<property name="cronExpression">   
+            
+           <value>0 3 0 * * ?</value>
+        </property>   
+	<property name="misfireInstruction" value="2" /></bean>
+	
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean" id="buildAssetAllocationTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" /><property name="requestsRecovery" value="true" /><property name="jobClass" value="com.andy.quartz.JobDetailBean" /><property name="jobDataAsMap"><map><entry key="targetObject" value="themeFundCrawlerTask" /><entry key="targetMethod" value="assetAllocation" /></map></property></bean>
+		</property>
+		<property name="cronExpression">   
+              
+           <value>0 1 0 * * ?</value>
+        </property>   
+	<property name="misfireInstruction" value="2" /></bean>
+	
+	
+	
+	
+	
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean" id="buildPositionTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" /><property name="requestsRecovery" value="true" /><property name="jobClass" value="com.andy.quartz.JobDetailBean" /><property name="jobDataAsMap"><map><entry key="targetObject" value="themeFundCrawlerTask" /><entry key="targetMethod" value="crawlPositionDetails" /></map></property></bean>
+		</property>
+		<property name="cronExpression">   
+              
+           <value>0 5 0 * * ?</value>
+        </property>   
+	<property name="misfireInstruction" value="2" /></bean>
+	
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean" id="buildNameMatchTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" /><property name="requestsRecovery" value="true" /><property name="jobClass" value="com.andy.quartz.JobDetailBean" /><property name="jobDataAsMap"><map><entry key="targetObject" value="themeFundCrawlerTask" /><entry key="targetMethod" value="buildNameMatchDegree" /></map></property></bean>
+		</property>
+		<property name="cronExpression">   
+              
+           <value>0 51 0 * * ?</value>
+        </property>   
+	<property name="misfireInstruction" value="2" /></bean>
+	
+	
+	
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean" id="buildPositionMatchTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" /><property name="requestsRecovery" value="true" /><property name="jobClass" value="com.andy.quartz.JobDetailBean" /><property name="jobDataAsMap"><map><entry key="targetObject" value="themeFundCrawlerTask" /><entry key="targetMethod" value="buildPositionMatchDegree" /></map></property></bean>
+		</property>
+		<property name="cronExpression">   
+              
+           <value>0 1 1 * * ?</value>
+        </property>   
+	<property name="misfireInstruction" value="2" /></bean>
+	
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean" id="buildSimilarMatchTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" /><property name="requestsRecovery" value="true" /><property name="jobClass" value="com.andy.quartz.JobDetailBean" /><property name="jobDataAsMap"><map><entry key="targetObject" value="themeFundCrawlerTask" /><entry key="targetMethod" value="buildTopicSimilar" /></map></property></bean>
+		</property>
+		<property name="cronExpression">   
+              
+           <value>0 14 3 * * ?</value>
+        </property>
+	<property name="misfireInstruction" value="2" /></bean>
+	
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean" id="buildThemeMatchTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" /><property name="requestsRecovery" value="true" /><property name="jobClass" value="com.andy.quartz.JobDetailBean" /><property name="jobDataAsMap"><map><entry key="targetObject" value="themeFundCrawlerTask" /><entry key="targetMethod" value="buildThemeMatchDegree" /></map></property></bean>
+		</property>
+		<property name="cronExpression">   
+              
+           <value>0 2 5 * * ?</value>
+        </property>   
+	<property name="misfireInstruction" value="2" /></bean>
+	
+	
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean" id="buildFundStyleAndTypeTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" /><property name="requestsRecovery" value="true" /><property name="jobClass" value="com.andy.quartz.JobDetailBean" /><property name="jobDataAsMap"><map><entry key="targetObject" value="themeFundCrawlerTask" /><entry key="targetMethod" value="buildFundAndType" /></map></property></bean>
+		</property>
+		<property name="cronExpression">   
+             
+           <value>0 24 1 * * ?</value>
+        </property>   
+	<property name="misfireInstruction" value="2" /></bean>
+	
+	
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean" id="buildNetTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" /><property name="requestsRecovery" value="true" /><property name="jobClass" value="com.andy.quartz.JobDetailBean" /><property name="jobDataAsMap"><map><entry key="targetObject" value="themeFundCrawlerTask" /><entry key="targetMethod" value="buildNet" /></map></property></bean>
+		</property>
+		<property name="cronExpression">   
+              
+           <value>0 6 0 * * ?</value>
+        </property>   
+	<property name="misfireInstruction" value="2" /></bean>
+	
+	
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean" id="buildFundManagerTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" /><property name="requestsRecovery" value="true" /><property name="jobClass" value="com.andy.quartz.JobDetailBean" /><property name="jobDataAsMap"><map><entry key="targetObject" value="fundManagerTask" /><entry key="targetMethod" value="buildFundManager" /></map></property></bean>
+		</property>
+		<property name="cronExpression">   
+              
+           <value>0 7 0 * * ?</value>
+        </property>   
+	<property name="misfireInstruction" value="2" /></bean>
+	
+	
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean" id="buildMaxDrawdownTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" /><property name="requestsRecovery" value="true" /><property name="jobClass" value="com.andy.quartz.JobDetailBean" /><property name="jobDataAsMap"><map><entry key="targetObject" value="themeFundCrawlerTask" /><entry key="targetMethod" value="buildMaxDrawdown" /></map></property></bean>
+		</property>
+		<property name="cronExpression">   
+              
+           <value>0 36 1 * * ?</value>
+        </property>   
+	<property name="misfireInstruction" value="2" /></bean>
+	
+	
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean" id="buildReturnRateTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" /><property name="requestsRecovery" value="true" /><property name="jobClass" value="com.andy.quartz.JobDetailBean" /><property name="jobDataAsMap"><map><entry key="targetObject" value="themeFundCrawlerTask" /><entry key="targetMethod" value="buildReturnRate" /></map></property></bean>
+		</property>
+		<property name="cronExpression">   
+              
+           <value>0 13 2 * * ?</value>
+           
+        </property>   
+	<property name="misfireInstruction" value="2" /></bean>
+	
+	
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean" id="buildFundTagTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" /><property name="requestsRecovery" value="true" /><property name="jobClass" value="com.andy.quartz.JobDetailBean" /><property name="jobDataAsMap"><map><entry key="targetObject" value="themeFundCrawlerTask" /><entry key="targetMethod" value="buildFundTag" /></map></property></bean>
+		</property>
+		<property name="cronExpression">   
+              
+           <value>0 34 8 * * ?</value>
+        </property>   
+	<property name="misfireInstruction" value="2" /></bean>
+	
+	
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean" id="buildFundManagerTagsTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" /><property name="requestsRecovery" value="true" /><property name="jobClass" value="com.andy.quartz.JobDetailBean" /><property name="jobDataAsMap"><map><entry key="targetObject" value="fundManagerTask" /><entry key="targetMethod" value="buildFundManagerTags" /></map></property></bean>
+		</property>
+		<property name="cronExpression">   
+              
+           <value>0 31 8 * * ?</value>
+        </property>   
+	<property name="misfireInstruction" value="2" /></bean>
+	
+	
+	<bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean" id="buildAskFundTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+				<property name="durability" value="true" /><property name="requestsRecovery" value="true" /><property name="jobClass" value="com.andy.quartz.JobDetailBean" /><property name="jobDataAsMap"><map><entry key="targetObject" value="themeFundCrawlerTask" /><entry key="targetMethod" value="buildAskFund" /></map></property></bean>
+		</property>
+		<property name="cronExpression">   
+              
+           <value>0 1 9 * * ?</value>
+        </property>   
+	<property name="misfireInstruction" value="2" /></bean>
+	
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">  
+		<property name="triggers">  
+            <list>
+				<ref bean="buildThemeFundCodeTriggerBean" />
+				<ref bean="buildFundSituationTriggerBean" />
+				<ref bean="buildSectorAllocationTriggerBean" />
+				<ref bean="buildPositionTriggerBean" />
+				<ref bean="buildNameMatchTriggerBean" />
+				
+				<ref bean="buildSimilarMatchTriggerBean" />
+				<ref bean="buildPositionMatchTriggerBean" />
+				<ref bean="buildThemeMatchTriggerBean" />
+				
+			    <ref bean="buildFundStyleAndTypeTriggerBean" />
+				<ref bean="buildNetTriggerBean" />
+				<ref bean="buildFundManagerTriggerBean" />
+				<ref bean="buildMaxDrawdownTriggerBean" />
+				<ref bean="buildReturnRateTriggerBean" />
+				<ref bean="buildFundTagTriggerBean" />
+				<ref bean="buildFundManagerTagsTriggerBean" />
+				<ref bean="buildAssetAllocationTriggerBean" />
+				<ref bean="buildAskFundTriggerBean" />
+			</list>  
+		</property>  
+	<property name="dataSource" ref="dataSource" /><property name="overwriteExistingJobs" value="true" /><property name="exposeSchedulerInRepository" value="true" /><property name="autoStartup" value="true" /><property name="startupDelay" value="10" /><property name="applicationContextSchedulerContextKey" value="applicationContextKey" /><property name="configLocation" value="quartz.properties" /><property name="jobFactory"><bean class="com.andy.quartz.AutoWiringSpringBeanJobFactory" /></property></bean>
+</beans>
