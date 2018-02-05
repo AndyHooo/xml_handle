@@ -136,7 +136,16 @@ def get_childrens(nodes):
         all_childrens.extend(node.getchildren())
     return all_childrens
 
+def del_nodes(parent_node,nodelist):
+    for node in nodelist:
+        parent_node.remove(node)
+        
+def del_node(parent_node,node):
+    parent_node.remove(node)
+        
 
+def get_attrib(node,name):
+    return node.attrib[name]
 
 if __name__ == "__main__":
     #1. 读取xml文件

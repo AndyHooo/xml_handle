@@ -25,6 +25,10 @@ def convert():
         
         tree = xml_util.read_xml(xml_file) 
         root = tree.getroot()
+        
+        """
+        修改非task标签编写的定时任务
+        """
         bean_nodes = xml_util.find_nodes(root, '{http://www.springframework.org/schema/beans}bean')
         
         #修改org.springframework.scheduling.quartz.CronTriggerBean
@@ -68,8 +72,8 @@ def convert():
             targetMethod_node = xml_util.get_node_by_keyvalue(property_nodes, {"name":"targetMethod"})[0]  
             concurrent_node = xml_util.get_node_by_keyvalue(property_nodes, {"name":"concurrent"})[0]
                      
-            targetObject = targetObject_node.attrib['ref']   
-            targetMethod = targetMethod_node.attrib['value']
+            targetObject = xml_util.get_attrib(targetObject_node, 'ref')
+            targetMethod = xml_util.get_attrib(targetMethod_node, 'value')
             
             node.remove(targetObject_node)        
             node.remove(targetMethod_node) 
@@ -121,7 +125,112 @@ def convert():
         xml_util.add_child_nodes(SchedulerFactoryBean_nodes, configLocation_node)
         xml_util.add_child_nodes(SchedulerFactoryBean_nodes, jobFactory_node)
         
+        
+        """
+        修改task标签编写的定时任务
+        """
+        #删除scheduler节点
+        scheduler_nodes = xml_util.find_nodes(root, '{http://www.springframework.org/schema/task}scheduler')
+        xml_util.del_nodes(root, scheduler_nodes)
+        
+        scheduled_tasks_nodes = xml_util.find_nodes(root, '{http://www.springframework.org/schema/task}scheduled-tasks')
+        scheduled_nodes = xml_util.get_childrens(scheduled_tasks_nodes)
+        
+        #创建SchedulerFactoryBean,如果存在就不需要创建
+        bean_nodes = xml_util.find_nodes(root, '{http://www.springframework.org/schema/beans}bean')
+        SchedulerFactoryBean_nodes = xml_util.get_node_by_keyvalue(bean_nodes, {"class":"org.springframework.scheduling.quartz.SchedulerFactoryBean"})
+        if SchedulerFactoryBean_nodes == None or len(SchedulerFactoryBean_nodes) == 0:
+            SchedulerFactoryBean_node = xml_util.create_node('bean',{'class':'org.springframework.scheduling.quartz.SchedulerFactoryBean'},'')
+        else:
+            SchedulerFactoryBean_node = SchedulerFactoryBean_nodes[0]
+            
+        triggers_node = xml_util.create_node('property',{'name':'triggers'},'')
+        list_node = xml_util.create_node('list',{},'')
+        
+        for node in scheduled_nodes:
+            targetObject = xml_util.get_attrib(node, 'ref')
+            targetMethod = xml_util.get_attrib(node, 'method')
+            try:
+                cron = xml_util.get_attrib(node, 'cron')
+            except:
+                fixed_delay = xml_util.get_attrib(node,'fixed-delay')
+                cron = '0/' + str(int(fixed_delay) / 1000) + ' * * * * ?'
+            
+            #删除当前scheduled节点
+            xml_util.del_node(scheduled_tasks_nodes[0], node)
+            
+            #创建CronTriggerFactoryBean节点
+            CronTriggerFactoryBean_id = targetMethod + 'Trigger'
+            CronTriggerFactoryBean_node = xml_util.create_node('bean',{'id':CronTriggerFactoryBean_id,'class':'org.springframework.scheduling.quartz.CronTriggerFactoryBean'},'')
+            
+            #创建创建CronTriggerFactoryBean的属性子节点
+            cronExpression_node = xml_util.create_node('property',{'name':'cronExpression','value':cron},'')
+            
+            #创建misfireInstruction节点
+            misfireInstruction_node = xml_util.create_node('property',{'name':'misfireInstruction','value':'2'},'')
+            
+            #创建jobDetail节点
+            jobDetail_node = xml_util.create_node('property',{'name':'jobDetail'},'')
+            
+            #创建JobDetailFactoryBean节点
+            JobDetailFactoryBean_node = xml_util.create_node('bean', {'class':'org.springframework.scheduling.quartz.JobDetailFactoryBean'}, '')
+            
+            #创建JobDetailFactoryBean的属性子节点
+            durability_node = xml_util.create_node('property',{'name':'durability','value':'true'},'')
+            requestsRecovery_node = xml_util.create_node('property',{'name':'requestsRecovery','value':'false'},'')
+            jobClass_node = xml_util.create_node('property',{'name':'jobClass','value':proxy_class},'')
+            jobDataAsMap_node = xml_util.create_node('property',{'name':'jobDataAsMap'},'')
+            
+            map_node = xml_util.create_node('map',{},'')
+            targetObject_node = xml_util.create_node('entry',{'key':'targetObject','value':targetObject},'')
+            targetMethod_node = xml_util.create_node('entry',{'key':'targetMethod','value':targetMethod},'')
+            
+            xml_util.add_child_node(map_node,targetObject_node)
+            xml_util.add_child_node(map_node,targetMethod_node)
+            xml_util.add_child_node(jobDataAsMap_node,map_node)
+            
+            xml_util.add_child_node(JobDetailFactoryBean_node,durability_node)
+            xml_util.add_child_node(JobDetailFactoryBean_node,requestsRecovery_node)
+            xml_util.add_child_node(JobDetailFactoryBean_node,jobClass_node)
+            xml_util.add_child_node(JobDetailFactoryBean_node,jobDataAsMap_node)
+            
+            xml_util.add_child_node(jobDetail_node,JobDetailFactoryBean_node)
+            
+            xml_util.add_child_node(CronTriggerFactoryBean_node,jobDetail_node)
+            xml_util.add_child_node(CronTriggerFactoryBean_node,cronExpression_node)
+            xml_util.add_child_node(CronTriggerFactoryBean_node,misfireInstruction_node)
+            
+            xml_util.add_child_node(root,CronTriggerFactoryBean_node)
+            ref_node = xml_util.create_node('ref',{'bean':CronTriggerFactoryBean_id},'')
+            xml_util.add_child_node(list_node,ref_node)
+           
+        xml_util.del_nodes(root,scheduled_tasks_nodes)
+        xml_util.add_child_node(triggers_node,list_node)
+        #创建SchedulerFactoryBean
+        dataSource_node = xml_util.create_node("property",{"name":"dataSource","ref":data_source_str},'')
+        overwriteExistingJobs_node = xml_util.create_node("property",{"name":"overwriteExistingJobs","value":"true"},'')
+        exposeSchedulerInRepository_node = xml_util.create_node("property",{"name":"exposeSchedulerInRepository","value":"true"},'')
+        autoStartup_node = xml_util.create_node("property",{"name":"autoStartup","value":"true"},'')
+        startupDelay_node = xml_util.create_node("property",{"name":"startupDelay","value":"10"},'')
+        applicationContextSchedulerContextKey_node = xml_util.create_node("property",{"name":"applicationContextSchedulerContextKey","value":"applicationContextKey"},'')
+        configLocation_node = xml_util.create_node("property",{"name":"configLocation","value":quartz_properties_path},'')
+        jobFactory_node = xml_util.create_node("property",{"name":"jobFactory"},'')
+        AutoWiringSpringBeanJobFactory_node = xml_util.create_node("bean",{"class":"com.andy.quartz.AutoWiringSpringBeanJobFactory"},'')
+        
+        xml_util.add_child_node(jobFactory_node,AutoWiringSpringBeanJobFactory_node)
+        xml_util.add_child_node(SchedulerFactoryBean_node, dataSource_node)
+        xml_util.add_child_node(SchedulerFactoryBean_node, overwriteExistingJobs_node)
+        xml_util.add_child_node(SchedulerFactoryBean_node, exposeSchedulerInRepository_node)
+        xml_util.add_child_node(SchedulerFactoryBean_node, autoStartup_node)
+        xml_util.add_child_node(SchedulerFactoryBean_node, startupDelay_node)
+        xml_util.add_child_node(SchedulerFactoryBean_node, applicationContextSchedulerContextKey_node)
+        xml_util.add_child_node(SchedulerFactoryBean_node, configLocation_node)
+        xml_util.add_child_node(SchedulerFactoryBean_node, jobFactory_node)
+        xml_util.add_child_node(SchedulerFactoryBean_node, triggers_node)
+        xml_util.add_child_node(root, SchedulerFactoryBean_node)
+            
         xml_util.write_xml(tree, converted_file_path)
+        
     print '转换完毕!!!'
 def load_xml_files():
     """
